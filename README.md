@@ -15,7 +15,7 @@ Methodology, rules, and templates for using [Claude Code](https://docs.claude.co
 - **`templates/`** — `CLAUDE.md.template`, `.env.example`, `settings.example.json` to bootstrap a new project with these patterns in place.
 - **Ready-made `CLAUDE.md` template with `${ENV}` placeholders** — fill `.env` once, generate a project-specific `CLAUDE.md` in seconds, no blank-page setup pain.
 - **`docs/`** — how the layers fit together, and how this relates to the sibling repo [`claude-code-guardrails`](https://github.com/web-werkstatt/claude-code-guardrails).
-- **`skills/`** — *(coming in stage 2)* curated, generic Claude Code skills.
+- **`skills/`** — 11 curated, generic Claude Code skills (setup, session discipline, audit, secure-work).
 
 This is **methodology + templates**. Not a tool. Not a plugin. No `npm install`.
 
@@ -137,7 +137,19 @@ claude-code-workflow/
 ├── docs/
 │   ├── architecture.md                # how layers fit together
 │   └── relationship-to-guardrails.md  # split with sibling repo
-└── skills/                            # (stage 2 — curated skill pack)
+└── skills/                            # 11 curated skills + README
+    ├── README.md
+    ├── create-agent/                  # scaffold a subagent
+    ├── create-skill/                  # scaffold a skill
+    ├── setup-claude-env/              # detect stack + add LSP/rules/hooks/agents
+    ├── claude-features-update/        # audit Claude Code feature usage
+    ├── find-skills/                   # discover skills via npx skills
+    ├── session-end/                   # archive + slim handoff + commit
+    ├── dokumentenaustausch/           # shared-docs folder convention
+    ├── projekt-audit-kundenplan/      # 6-phase customer project audit
+    ├── owasp-security/                # OWASP Top 10 prevention patterns
+    ├── accessibility-a11y/            # WCAG a11y guidelines
+    └── bulletproof-container/         # container hardening + vuln scanning
 ```
 
 ## Relationship to `claude-code-guardrails`
@@ -149,15 +161,18 @@ The two repos are siblings:
 
 For most users, install both. See [`docs/relationship-to-guardrails.md`](./docs/relationship-to-guardrails.md).
 
-## Stage 2 — skills
+## Skills (`skills/`)
 
-Stage 2 will add a `skills/` directory with curated, generic Claude Code skills extracted from real-project use. Examples planned:
+11 curated, generic Claude Code skills extracted from real-project use, organized into four groups:
 
-- Code-quality skills: `simplify`, `dry-principle`, `solid-principles`, `code-refactoring`, `anti-monolith-guard`.
-- Session-management skills: `session-end`, `changelog`, `architecture-decisions`.
-- Setup skills: `create-skill`, `create-agent`, `setup-claude-env`.
+- **Setup & Discovery & Meta** — `create-agent`, `create-skill`, `setup-claude-env`, `claude-features-update`, `find-skills`
+- **Session discipline** — `session-end`, `dokumentenaustausch`
+- **Audit & customer work** — `projekt-audit-kundenplan`
+- **Secure working practice** — `owasp-security`, `accessibility-a11y`, `bulletproof-container`
 
-Project-specific skills (deploy scripts, customer-specific tooling, internal CMS integrations) are **not** part of this repo. Those belong in private project repos or separate domain-specific skill packs.
+See [`skills/README.md`](./skills/README.md) for what each skill does and how to install. Install all with `cp -r skills/* ~/.claude/skills/` or pick selectively.
+
+Project-specific skills (deploy scripts, customer-specific tooling, internal CMS integrations) and tech-stack-specific skills (FastAPI, Astro, Tailwind, etc.) are **not** part of this repo — those belong in private project repos or separate stack-specific skill packs.
 
 ## License
 
