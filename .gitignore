@@ -1,0 +1,24 @@
+# Real .env values — only .env.example is committed
+.env
+.env.local
+.env.*.local
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Local Claude state (if anyone clones into a working dir and runs from here)
+.claude/settings.local.json
+.claude/cache/
+
+# Logs
+*.log
+
+# Misc
+*.bak
+*.tmp

@@ -1,0 +1,143 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+> **Template note**: Replace placeholders like `${PROJECT_NAME}`, `${DEPLOY_SSH_HOST}` etc.
+> with values from your `.env` file. See `.env.example` for the full list.
+> Do not commit secrets to this file. Use `.env` (gitignored) for sensitive values.
+
+## Mission
+
+${PROJECT_NAME} is ${PROJECT_DESCRIPTION_ONE_LINE}. ${ARCHITECTURE_ONE_LINE}.
+
+> Example for `ARCHITECTURE_ONE_LINE`: *„FastAPI backend + PostgreSQL + Next.js frontend with Tailwind, dockerized via docker-compose."*
+
+The repo layout: ${REPO_LAYOUT_ONE_LINE}.
+
+> Example for `REPO_LAYOUT_ONE_LINE`: focus on where backend, frontend, infra, and docs live — e.g. *„`apps/` for runnable services, `packages/` for shared libs, `infrastructure/` for deploy scripts, `docs/` for engineering standards and audit reports."*
+
+## Session-Start Protocol
+
+When starting any task:
+
+1. Read `next-session.md` (or your operative status file) for current NOW / NEXT / LATER tasks.
+2. Read the active sprint file or master plan.
+3. Read this CLAUDE.md for invariants and protected paths.
+4. State at the beginning of the session which files you read and which is leading.
+
+If sources contradict: most recent operative file wins.
+
+See `methodology/session-start-protocol.md` (in this template's source repo) for the full pattern.
+
+## Source hierarchy (binding)
+
+1. `next-session.md` — operative steering
+2. Active sprint file — definition-of-done
+3. Master plan / sprint index — overview
+4. `docs/audit-or-findings.md` — reference
+5. `docs/engineering-standards.md` — code rules
+6. `docs/operational-commands.md` — container / DB / deploy
+7. Historical files only on demand
+
+## Non-negotiable invariants
+
+- **Multi-tenant isolation** (if applicable): all tenant-aware DB queries must filter by `tenant_id`.
+- **DB writes via ORM only**, never raw SQL with string-building. Bind parameters always.
+- **Deploy via `${DEPLOY_SCRIPT}` only** — no manual `docker save` / `scp` / `load`. No `/tmp` as transport.
+- **CORS never `allow_origins=["*"]`** in production. Pydantic / Zod validation for all API inputs.
+- **Spec is never delete-/move-authorization.** Specs authorize *analysis and plan*, NOT *destruction*. Before any `rm` / `mv` / `git rm` / `find -delete` / overwrite in protected paths: list what's affected, get explicit user confirmation in the same turn, stop on mismatch.
+- **Reality-check before every NOW task.** Three lines: assumption from spec / current repo reality / match yes-no. On mismatch: stop and inform. See `methodology/reality-check-pattern.md`.
+
+### Protected paths (read-only without inventory + user approval)
+
+| Path | Reason |
+|---|---|
+| `${DESIGN_SOURCE_DIR}/` | Original design source (HTML / CSS / screenshots) |
+| `${TEMPLATE_DIR}/` | External design templates |
+| `docs/test-reports/**/snapshots/` | Before/after evidence — frozen after creation |
+| `_archive/`, `archive/` | Historical sprint / code archives |
+
+Adapt this list to your project. If your project has no design source dir or template dir, remove those rows or set them to a path that actually applies. Add others as needed.
+
+### Reading rules (DON'T READ EVERYTHING)
+
+- Read **only** files / directories explicitly named in the current NOW task OR needed for reality-check.
+- State your reading plan before mass operations: *„I plan to read: …"* / *„I will not read: …"*
+- **Mass-reads are blocked** by hook and must be avoided:
+  - `ls -R` over CWD
+  - `find .` / `find /` without filter
+  - `rg <pattern>` or `grep -r <pattern>` without path argument
+  - `cat *.md` at repo root
+- If you need to „understand the whole repo", the task is scoped too broadly — ask the user for narrower scope.
+
+### Hooks-trigger = design decision
+
+When a hook or permission rule blocks a tool call, that's **deliberate, not a tool error**. Reaction:
+
+1. Explain what was attempted: *„I wanted to do X, because Y."*
+2. Name the block reason: *„mass-read"* / *„protected path"* / *„destructive command"*.
+3. Ask the user: (a) narrow the task scope, or (b) lift the block for this case.
+
+Never bypass via alternative syntax. That's bypass, not solution.
+
+## Write protection and file policies
+
+| File / directory | Policy | Notes |
+|---|---|---|
+| `next-session.md` | `slim-operative` | Current state only. No history. |
+| `next-session-archiv.md` | `append-top` | Sprint completions. Newest on top. |
+| `sessions/sprints/*.md` (after creation) | `append-only` | Don't rewrite spec, only extend / status. |
+| `docs/test-reports/**/snapshots/` | `read-only-after-creation` | Evidence files, frozen. |
+| `${DESIGN_SOURCE_DIR}/` | `read-only` | Source-of-truth for design. |
+| `_archive/**`, `archive/**` | `read-only` | Historical archives. |
+| `CLAUDE.md`, similar root-doc | `generated-blocks-only` | MANUAL blocks frozen, GENERATED blocks overwriteable. |
+
+See `methodology/write-protection-policies.md` for the marker convention.
+
+## Working mode for changes
+
+1. Determine the current task and sprint goal unambiguously.
+2. Change minimally invasive.
+3. Respect existing structure. No broad refactors without instruction.
+4. Run verifications after each relevant change.
+5. Don't silently break build, typecheck, or fallback paths.
+6. Write assumptions explicitly and briefly.
+7. Always verify before reporting done. Each fix must address the actual root cause, not displace the symptom.
+
+## Verifications
+
+${VERIFICATION_COMMANDS_FOR_YOUR_STACK}
+
+> Example for a typical verification chain: `pnpm lint && pnpm test && pnpm build` (Node/TS stack) or `pytest && mypy . && ruff check .` (Python stack). Replace with what your stack actually uses.
+
+A task is not done if:
+
+- Tests fail.
+- Build / typecheck fails.
+- Live functionality breaks.
+- Real functions get hidden behind static mockups.
+- DB writes start using raw SQL or tenant-filter is missing.
+
+## Session-End Protocol
+
+Every session that changes code, production setup, or workflow configuration must:
+
+1. **Append archive entry** to `next-session-archiv.md` (or your equivalent) with completed sprints, production-effective ops, follow-ups, deferred tasks, commit hashes. Newest entry on top.
+2. **Update operative file** (`next-session.md` or equivalent) — bring NOW / NEXT / LATER up to date.
+3. **Update memory** if new patterns emerged.
+4. **Verify last commit + tag** — `git status` clean (or deliberately dirty with reasoning in the archive entry).
+
+See `methodology/session-end-protocol.md`.
+
+## Mandatory at every new session
+
+Before changing code or making suggestions:
+
+1. Confirm explicitly that you read this CLAUDE.md.
+2. Name the current NOW task from `next-session.md`.
+3. Name the leading sprint file.
+4. Confirm you understand the non-negotiable invariants above.
+
+---
+
+*This CLAUDE.md was bootstrapped from [claude-code-workflow](https://github.com/web-werkstatt/claude-code-workflow). Adapt to your project.*

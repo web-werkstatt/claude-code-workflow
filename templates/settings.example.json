@@ -1,0 +1,67 @@
+{
+  "_comment_1": "EXAMPLE — not a finished security policy.",
+  "_comment_2": "Copy to .claude/settings.json in your project, adapt paths and tools to your stack.",
+  "_comment_3": "permissions.deny ALWAYS wins, including under sandbox auto-allow. Use deny for destructive operations, NOT ask.",
+  "_comment_4": "See https://github.com/web-werkstatt/claude-code-guardrails for the destructive-bash hook this pairs with.",
+
+  "permissions": {
+    "deny": [
+      "Bash(rm:*)",
+      "Bash(git rm:*)",
+      "Bash(git restore:*)",
+      "Bash(git checkout -- *)",
+      "Bash(git checkout :/)",
+      "Bash(git clean -f*)",
+      "Bash(git reset --hard*)",
+      "Bash(find * -delete*)",
+      "Edit(./design-source/**)",
+      "Edit(./design-templates/**)",
+      "Edit(./_archive/**)",
+      "Edit(./archive/**)",
+      "Edit(./docs/test-reports/**/snapshots/**)",
+      "Write(./design-source/**)",
+      "Write(./design-templates/**)",
+      "Write(./_archive/**)",
+      "Write(./archive/**)",
+      "Write(./docs/test-reports/**/snapshots/**)"
+    ],
+    "ask": [
+      "Bash(docker compose down*)",
+      "Bash(docker rm:*)",
+      "Bash(docker volume rm:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(pip uninstall:*)"
+    ]
+  },
+
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/block-destructive.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/stop.sh"
+          }
+        ]
+      }
+    ]
+  },
+
+  "_notes": {
+    "deny_vs_ask": "Use deny for destructive operations (rm, git rm, etc.). ask is bypassed under sandbox auto-allow. See claude-code-guardrails docs.",
+    "hooks": "PreToolUse Bash-hook is the hard layer. Stop-hook is for sync/reminder logic, must be idempotent.",
+    "adapt_paths": "Replace design-source, design-templates, archive paths with your project's protected paths."
+  }
+}
