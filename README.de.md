@@ -15,7 +15,7 @@ Methodik, Regeln und Templates für die Arbeit mit [Claude Code](https://docs.cl
 - **`templates/`** — `CLAUDE.md.template`, `.env.example`, `settings.example.json` zum Bootstrappen eines neuen Projekts mit diesen Patterns.
 - **Fertiges `CLAUDE.md`-Template mit `${ENV}`-Platzhaltern** — `.env` einmal füllen, projekt-spezifische `CLAUDE.md` in Sekunden generieren, kein Leerseiten-Setup-Schmerz.
 - **`docs/`** — wie die Schichten zusammenspielen und Verhältnis zum Schwester-Repo [`claude-code-guardrails`](https://github.com/web-werkstatt/claude-code-guardrails).
-- **`skills/`** — *(kommt in Stufe 2)* kuratierte, generische Claude-Code-Skills.
+- **`skills/`** — 11 kuratierte, generische Claude-Code-Skills (Setup, Session-Disziplin, Audit, sichere Arbeitsweise).
 
 Das ist **Methodik + Templates**. Kein Tool. Kein Plugin. Kein `npm install`.
 
@@ -137,7 +137,19 @@ claude-code-workflow/
 ├── docs/
 │   ├── architecture.md                # wie die Schichten zusammenspielen
 │   └── relationship-to-guardrails.md  # Aufteilung mit Schwester-Repo
-└── skills/                            # (Stufe 2 — kuratiertes Skill-Pack)
+└── skills/                            # 11 kuratierte Skills + README
+    ├── README.md
+    ├── create-agent/                  # Subagent-Gerüst erstellen
+    ├── create-skill/                  # Skill-Gerüst erstellen
+    ├── setup-claude-env/              # Stack erkennen + LSP/Rules/Hooks/Agents ergänzen
+    ├── claude-features-update/        # Claude-Code-Feature-Nutzung auditieren
+    ├── find-skills/                   # Skills via npx skills entdecken
+    ├── session-end/                   # Archiv + schlanker Handoff + Commit
+    ├── dokumentenaustausch/           # gemeinsamer Datei-Austausch-Ordner
+    ├── projekt-audit-kundenplan/      # 6-Phasen Kunden-Projekt-Audit
+    ├── owasp-security/                # OWASP Top 10 Präventions-Patterns
+    ├── accessibility-a11y/            # WCAG a11y Richtlinien
+    └── bulletproof-container/         # Container-Härtung + Vuln-Scan
 ```
 
 ## Verhältnis zu `claude-code-guardrails`
@@ -149,15 +161,18 @@ Die beiden Repos sind Geschwister:
 
 Für die meisten User: beide installieren. Siehe [`docs/relationship-to-guardrails.md`](./docs/relationship-to-guardrails.md).
 
-## Stufe 2 — Skills
+## Skills (`skills/`)
 
-Stufe 2 wird ein `skills/`-Verzeichnis mit kuratierten, generischen Claude-Code-Skills aus echter Projekt-Nutzung enthalten. Geplante Beispiele:
+11 kuratierte, generische Claude-Code-Skills aus echter Projekt-Nutzung, in vier Gruppen:
 
-- Code-Qualität: `simplify`, `dry-principle`, `solid-principles`, `code-refactoring`, `anti-monolith-guard`.
-- Session-Management: `session-end`, `changelog`, `architecture-decisions`.
-- Setup: `create-skill`, `create-agent`, `setup-claude-env`.
+- **Setup & Discovery & Meta** — `create-agent`, `create-skill`, `setup-claude-env`, `claude-features-update`, `find-skills`
+- **Session-Disziplin** — `session-end`, `dokumentenaustausch`
+- **Audit & Kunden-Arbeit** — `projekt-audit-kundenplan`
+- **Sichere Arbeitsweise** — `owasp-security`, `accessibility-a11y`, `bulletproof-container`
 
-Projekt-spezifische Skills (Deploy-Skripte, kunden-spezifisches Tooling, interne CMS-Integrationen) sind **nicht** Teil dieses Repos. Das gehört in private Projekt-Repos oder eigene Domain-Skill-Packs.
+Siehe [`skills/README.md`](./skills/README.md) für Beschreibung jedes Skills und Installation. Komplett installieren mit `cp -r skills/* ~/.claude/skills/` oder selektiv kopieren.
+
+Projekt-spezifische Skills (Deploy-Skripte, kunden-spezifisches Tooling, interne CMS-Integrationen) und Tech-Stack-spezifische Skills (FastAPI, Astro, Tailwind etc.) sind **nicht** Teil dieses Repos — das gehört in private Projekt-Repos oder eigene Stack-spezifische Skill-Packs.
 
 ## Lizenz
 
